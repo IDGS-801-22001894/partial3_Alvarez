@@ -1,226 +1,138 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizzería</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
-</head>
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
 
-<body class="bg-gray-100">
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.css" rel="stylesheet" />
 
-    <header class="bg-red-600 text-white py-4 shadow-md">
-        <div class="container mx-auto flex items-center justify-between px-4">
-            <a href="/" class="flex items-center space-x-2">
-                <img src="https://flowbite.com/docs/images/logo.svg" alt="Pizzería Logo" class="h-8 w-auto">  <!-- Reemplaza con tu logo -->
-                <span class="text-2xl font-bold">Pizzería Deliziosa</span>
-            </a>
+<div class="container mx-auto py-8 px-4">
+  <!-- Formulario Principal -->
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="bg-red-600 py-4 px-6 text-white font-bold text-center uppercase">
+      🍕 Pizzeria: Haz Tu Pedido 🍕
+    </div>
+    <form method="POST" class="py-4 px-6">
+      {{ form.hidden_tag() }}
 
-            <div class="flex items-center space-x-4">
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('logout') }}" class="bg-red-700 hover:bg-red-800 text-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">Cerrar Sesión</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}" class="text-white hover:text-gray-200 transition-colors">Iniciar Sesión</a>
-                {% endif %}
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>{{ macros.render_field(form.nombre) }}</div>
+        <div>{{ macros.render_field(form.direccion) }}</div>
+        <div>{{ macros.render_field(form.telefono) }}</div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <div>{{ macros.render_field(form.tamaño_pizza) }}</div>
+        <div>{{ macros.render_field(form.ingredientes) }}</div>
+        <div>{{ macros.render_field(form.numero_pizzas) }}</div>
+      </div>
+
+      <div class="text-center mt-6">
+        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <i class="fa-solid fa-cart-plus mr-2"></i> {{ form.submit.label }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Sección de Pedidos y Ventas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+    <!-- Panel de Pedidos -->
+    <div>
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="bg-gray-200 py-2 px-4 font-semibold text-gray-700 uppercase">
+          📋 Pedidos Actuales
         </div>
-    </header>
-
-    <main class="container mx-auto my-8 px-4">
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flex justify-center">
-                    <div class="w-full max-w-2xl">
-                        {% for category, message in messages %}
-                            <div class="p-4 mb-4 text-sm text-{{ 'green' if category == 'success' else 'red' }}-800 rounded-lg bg-{{ 'green' if category == 'success' else 'red' }}-50" role="alert">
-                                <span class="font-medium">{{ message }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endwith %}
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="bg-red-500 text-white py-4 px-6">
-                    <h2 class="text-2xl font-bold text-center">Formulario de Pedido</h2>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-semibold text-center mb-6">¡Haz tu pedido ahora!</h3>
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-                        <div class="mb-4">
-                            <label for="{{ form.nombre.id }}" class="block text-gray-700 font-semibold mb-2">Nombre</label>
-                            {{ form.nombre(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500") }}
-                        </div>
-                        <div class="mb-4">
-                            <label for="{{ form.direccion.id }}" class="block text-gray-700 font-semibold mb-2">Dirección</label>
-                            {{ form.direccion(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500") }}
-                        </div>
-                        <div class="mb-4">
-                            <label for="{{ form.telefono.id }}" class="block text-gray-700 font-semibold mb-2">Teléfono</label>
-                            {{ form.telefono(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500") }}
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 font-semibold mb-2">Tamaño de la Pizza</label>
-                            {{ form.tamaño_pizza(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500") }}
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 font-semibold mb-2">Ingredientes</label>
-                            {{ form.ingredientes(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500") }}
-                        </div>
-                        <div class="mb-4">
-                            <label for="{{ form.numero_pizzas.id }}" class="block text-gray-700 font-semibold mb-2">Número de Pizzas</label>
-                            {{ form.numero_pizzas(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500") }}
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-all">Agregar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="space-y-8">
-
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div class="bg-red-400 text-white py-4 px-6">
-                        <h3 class="text-2xl font-bold text-center">Pedidos Actuales</h3>
-                    </div>
-                    <div class="p-6">
-                        <div class="overflow-x-auto">
-                            <table class="w-full table-auto">
-                                <thead>
-                                    <tr class="bg-gray-100">
-                                        <th class="px-4 py-2">Tamaño</th>
-                                        <th class="px-4 py-2">Ingredientes</th>
-                                        <th class="px-4 py-2">Cantidad</th>
-                                        <th class="px-4 py-2">Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for pedido in pedidos %}
-                                        <tr class="border-b">
-                                            <td class="px-4 py-2">{{ pedido.tamaño }}</td>
-                                            <td class="px-4 py-2">{{ ', '.join(pedido.ingredientes) }}</td>
-                                            <td class="px-4 py-2">{{ pedido.cantidad }}</td>
-                                            <td class="px-4 py-2">${{ pedido.subtotal }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        {% if total_pedido > 0 %}
-                            <p class="text-center text-lg font-semibold mt-4"><strong>Total del Pedido:</strong> ${{ total_pedido }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div class="bg-yellow-400 text-white py-4 px-6">
-                        <h3 class="text-2xl font-bold text-center">Datos de Ventas</h3>
-                    </div>
-                    <div class="p-6">
-                        <form method="POST" id="ventasForm">
-                            {{ form.hidden_tag() }}
-                            <div class="mb-4">
-                                <label class="block text-gray-700 font-semibold mb-2">Periodo:</label>
-                                <div class="flex space-x-4">
-                                    <div class="flex items-center">
-                                        <input type="radio" id="dia" name="periodo" value="dia" class="form-radio text-red-600 focus:ring-red-500" {% if periodo == 'dia' %}checked{% endif %}>
-                                        <label for="dia" class="ml-2">Día</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="radio" id="mes" name="periodo" value="mes" class="form-radio text-red-600 focus:ring-red-500" {% if periodo == 'mes' %}checked{% endif %}>
-                                        <label for="mes" class="ml-2">Mes</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="hidden" id="fecha" name="fecha">
-                            <div class="text-center">
-                                <button type="submit" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-all">Mostrar Ventas</button>
-                            </div>
-                        </form>
-
-                        {% if ventas %}
-                            <div class="mt-6">
-                                <h4 class="text-xl font-semibold text-center mb-4">Ventas para {{ fecha }} ({{ periodo }}):</h4>
-                                <div class="overflow-x-auto">
-                                    <table class="w-full table-auto">
-                                        <thead>
-                                            <tr class="bg-gray-100">
-                                                <th class="px-4 py-2">ID</th>
-                                                <th class="px-4 py-2">Nombre</th>
-                                                <th class="px-4 py-2">Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for venta in ventas %}
-                                                <tr class="border-b">
-                                                    <td class="px-4 py-2">{{ venta.id }}</td>
-                                                    <td class="px-4 py-2">{{ venta.nombre }}</td>
-                                                    <td class="px-4 py-2">${{ venta.total_pedido }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <p class="text-center text-lg font-semibold mt-4"><strong>Ventas Totales:</strong> ${{ total_ventas }}</p>
-                            </div>
-                        {% else %}
-                            {% if fecha %}
-                                <p class="text-center text-gray-600">No hay datos de ventas para el período seleccionado.</p>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                    <div class="bg-gray-50 py-4 px-6 text-center">
-                        <form action="{{ url_for('terminar_pedido', nombre=nombre_cliente, direccion=direccion_cliente, telefono=telefono_cliente) }}" method="POST" class="inline-block mx-2">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-all">Completar Pedido</button>
-                        </form>
-                        <form action="{{ url_for('quitar_pedido') }}" method="POST" class="inline-block mx-2">
-                            {{ form.hidden_tag() }}
-                            <input type="hidden" name="nombre" value="{{ nombre_cliente }}">
-                            <input type="hidden" name="direccion" value="{{ direccion_cliente }}">
-                            <input type="hidden" name="telefono" value="{{ telefono_cliente }}">
-                            <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-all">Eliminar Pedido</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="py-4 px-6">
+          {% if pedidos %}
+          <table class="table-auto w-full">
+            <thead>
+              <tr class="text-left">
+                <th class="px-4 py-2">Tamaño</th>
+                <th class="px-4 py-2">Ingredientes</th>
+                <th class="px-4 py-2">Cantidad</th>
+                <th class="px-4 py-2">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for pedido in pedidos %}
+              <tr>
+                <td class="border px-4 py-2">{{ pedido.tamaño }}</td>
+                <td class="border px-4 py-2">{{ ', '.join(pedido.ingredientes) }}</td>
+                <td class="border px-4 py-2">{{ pedido.cantidad }}</td>
+                <td class="border px-4 py-2">${{ pedido.subtotal }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if total_pedido > 0 %}
+          <h4 class="text-right mt-4 text-green-600">Total: ${{ total_pedido }}</h4>
+          {% endif %}
+          {% else %}
+          <p class="text-center text-gray-500">No hay pedidos actualmente.</p>
+          {% endif %}
         </div>
-    </main>
+      </div>
+    </div>
 
-    <footer class="bg-gray-800 text-white text-center py-4">
-        <p>© 2024 Pizzería Deliziosa. Todos los derechos reservados.</p>
-    </footer>
+    <!-- Panel de Ventas -->
+    <div>
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="bg-gray-200 py-2 px-4 font-semibold text-gray-700 uppercase">
+          💰 Ventas del Dia
+        </div>
+        <div class="py-4 px-6">
+          {% if ventas %}
+          <ul class="divide-y divide-gray-200">
+            {% for venta in ventas %}
+            <li class="py-2 flex justify-between">
+              <span class="font-medium">{{ venta.nombre }}</span>
+              <span class="text-green-600">${{ venta.total_pedido }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          <h4 class="text-right mt-4 text-red-600">
+            Total Ventas: ${{ total_ventas }}
+          </h4>
+          {% else %}
+          <p class="text-center text-gray-500">No existen ventas.</p>
+          {% endif %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const radioButtons = document.querySelectorAll('input[name="periodo"]');
-            const ventasForm = document.getElementById('ventasForm');
-            const fechaInput = document.getElementById('fecha');
+          <form method="POST" class="mt-6 text-center">
+            {{ form.hidden_tag() }}
+            <label for="fecha" class="block text-gray-700 text-sm font-bold mb-2">Día:</label>
+            <input type="date" id="fecha" name="fecha" value="{{ fecha }}" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-3/4 mx-auto">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">
+              <i class="fa-solid fa-chart-line mr-2"></i> Mostrar Ventas
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const fechaActual = new Date();
-                    let fechaEnviar;
+  <!-- Botones de Acción -->
+  <div class="flex justify-center mt-8 space-x-4">
+    <form action="{{ url_for('clientes.quitar_pedido') }}" method="POST" class="inline-block">
+      {{ form.hidden_tag() }}
+      <input type="hidden" name="nombre" value="{{ nombre_cliente }}">
+      <input type="hidden" name="direccion" value="{{ direccion_cliente }}">
+      <input type="hidden" name="telefono" value="{{ telefono_cliente }}">
+      <button type="submit" class="bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        <i class="fa-solid fa-trash mr-2"></i> Quitar Pedido
+      </button>
+    </form>
 
-                    if (this.value === 'dia') {
-                        fechaEnviar = fechaActual.toISOString().split('T')[0];
-                    } else if (this.value === 'mes') {
-                        fechaEnviar = fechaActual.toISOString().slice(0, 7);
-                    }
+    <form action="{{ url_for('clientes.terminar_pedido') }}" method="POST" class="inline-block">
+      {{ form.hidden_tag() }}
+      <input type="hidden" name="nombre" value="{{ nombre_cliente }}">
+      <input type="hidden" name="direccion" value="{{ direccion_cliente }}">
+      <input type="hidden" name="telefono" value="{{ telefono_cliente }}">
+      <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        <i class="fa-solid fa-check mr-2"></i> Terminar Pedido
+      </button>
+    </form>
+  </div>
+</div>
 
-                    fechaInput.value = fechaEnviar;
-                    ventasForm.submit();
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.js"></script>
+{% endblock %}

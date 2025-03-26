@@ -1,25 +1,31 @@
-<html><head></head><body>{%macro datos(name,placeholder,type="text")%}
-  <label for="name">{{name}}:</label>
-  <p><input name="{{name}}" type="{{type}}" placeholder="{{placeholder}}"></p>
-  {%endmacro%} {%macro camposNuevos(field)%}
-  {{field.label}}
-  <dd>{{field(**kwargs) | safe}}</dd>
-  
-  {%if field.errors%}
-  <ul>
-    {%for error in field.errors%}
-    <li style="color: red">{{error}}</li>
-    {%endfor%}
-  </ul>
-  {%endif%} {%endmacro%} {% macro render_field(field) %}
-  <div>
-    {{ field.label }} {{ field(class="form-control") }} {% if field.errors %}
-    <ul class="text-danger">
+{% macro render_field(field, class="") %}
+  <div class="mb-4">
+    {{ field.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+    {{ field(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline " + class) }}
+    {% if field.errors %}
+    <ul class="text-red-500 text-xs italic mt-1">
       {% for error in field.errors %}
       <li>{{ error }}</li>
       {% endfor %}
     </ul>
     {% endif %}
   </div>
-  {% endmacro %}
-  </body></html>
+{% endmacro %}
+
+{% macro datos(name, placeholder, type="text") %}
+  <label for="{{name}}" class="block text-gray-700 text-sm font-bold mb-2">{{name}}:</label>
+  <input name="{{name}}" type="{{type}}" placeholder="{{placeholder}}" 
+         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+{% endmacro %}
+
+{% macro camposNuevos(field) %}
+  {{ field.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+  <dd>{{ field(**kwargs) | safe }}</dd>
+  {% if field.errors %}
+  <ul class="text-red-500 text-xs italic">
+    {% for error in field.errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+{% endmacro %}

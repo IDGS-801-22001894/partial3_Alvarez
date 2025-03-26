@@ -3,27 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Pizzería{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <title>{% block title %}Pizzería Deliziosa{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+    {% block extra_head %}{% endblock %}
 </head>
+
 <body class="bg-gray-100">
-    <header>
-        <div class="container mx-auto text-center">
-            <h1 class="text-5xl font-extrabold text-black drop-shadow-lg shadow-black">
-                ¡Bienvenidos a la Pizzería!
-            </h1>
+    <header class="bg-red-600 text-white py-4 shadow-md">
+        <div class="container mx-auto flex items-center justify-between px-4">
+            <a href="{{ url_for('index') }}" class="flex items-center space-x-2">
+                <img src="https://flowbite.com/docs/images/logo.svg" alt="Pizzería Logo" class="h-8 w-auto">
+                <span class="text-2xl font-bold">Pizzería Deliziosa</span>
+            </a>
+
+            <div class="flex items-center space-x-4">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('login.logout') }}" class="bg-red-700 hover:bg-red-800 text-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                        Cerrar Sesión
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login.login') }}" class="text-white hover:text-gray-200 transition-colors">
+                        Iniciar Sesión
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto mt-8 p-4 bg-white rounded-lg shadow-md">
+    <main class="container mx-auto my-8 px-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="flex justify-center"> <!-- Contenedor flexible para centrar -->
-                    <div class="w-full md:w-2/3 lg:w-1/2"> <!-- Ancho ajustable -->
+                <div class="flex justify-center">
+                    <div class="w-full max-w-2xl">
                         {% for category, message in messages %}
-                            <div class="flash {{ category }} p-4 mb-4 rounded-lg text-center">
-                                {{ message }}
+                            <div class="p-4 mb-4 text-sm text-{{ 'green' if category == 'success' else 'red' }}-800 rounded-lg bg-{{ 'green' if category == 'success' else 'red' }}-50" role="alert">
+                                <span class="font-medium">{{ message }}</span>
                             </div>
                         {% endfor %}
                     </div>
@@ -34,10 +50,10 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
-        <div class="container mx-auto text-center">
-            <p>&copy; 2023 Pizzería. Todos los derechos reservados.</p>
-        </div>
+    <footer class="bg-gray-800 text-white text-center py-4">
+        <p>© 2024 Pizzería Deliziosa. Todos los derechos reservados.</p>
     </footer>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>
